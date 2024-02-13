@@ -1,8 +1,10 @@
+import Finder from './Component/Finder';
+
 function App() {
   return (
-    <div className=" text-9xl">
-      <h1>Hello</h1>
-    </div>
+    <>
+      <Finder />
+    </>
   );
 }
 
