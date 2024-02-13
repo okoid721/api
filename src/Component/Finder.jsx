@@ -1,24 +1,112 @@
 import React from 'react';
+import { FaSearch } from 'react-icons/fa';
+import { IoSunnyOutline } from 'react-icons/io5';
+import { FaLocationDot } from "react-icons/fa6";
+import { FaLink } from "react-icons/fa";
+import { FaTwitter } from "react-icons/fa";
+import { CgOrganisation } from "react-icons/cg";
+import { useState } from 'react';
+import { useEffect } from 'react';
+
 
 const Finder = () => {
+  const [data, setData] = useState({});
+  const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://api.github.com/users/${inputValue}`
+        );
+        const data = await response.json();
+        setData(data);
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    if (inputValue) {
+      fetchData();
+    }
+  }, [inputValue]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // fetchData();  // No need to call fetchData here, it's handled in useEffect
+  };
+
+    
+
   return (
     <div className=" bg-[#141c2f]">
       <div className=" max-w-[40%] flex justify-center items-center mx-auto h-screen flex-col">
         <nav className=" w-full justify-between flex flex-row">
           <h1 className=" text-3xl font-bold text-blue-50">devFinder</h1>
-          <h1 className=" text-3xl font-bold text-blue-50">Light</h1>
+          <h1 className=" text-3xl font-bold text-blue-50 flex gap-5 items-center">
+            Light <IoSunnyOutline />
+          </h1>
         </nav>
-        <div className="md:flex mt-20 gap-y-6 justify-between w-full bg-[#1F2A48] py-2 rounded-md px-2" >
-            <div className="">
-          <input
-            type="text"
-            placeholder="Enter GitHub username"
-            className="w-full  px-3 py-2 mb-4 md:mb-0 mr-4 bg-transparent border-none outline-none"
-          />
+        <div className="md:flex mt-10 gap-y-6 justify-between w-full bg-[#1F2A48] py-4 rounded-md px-5">
+          <div className=" flex flex-row gap-1 items-center">
+            <FaSearch className=" size-10 text-blue-300" />
+            <input
+              type="search"
+              name="search"
+              id="search"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Enter GitHub username"
+              className="w-full  px-3 py-2 mb-4 md:mb-0 mr-4 bg-transparent border-none outline-none text-white"
+            />
           </div>
           <button className="w-[20%]  px-4 py-3  bg-sky-500 text-white font-semibold rounded-md">
             Search
           </button>
+        </div>
+
+        <div className=" bg-[#1F2A48] mt-10  w-full py-5 px-2 rounded-md">
+          <div className=" flex w-full">
+            <div className=" rounded-full w-32 h-32   bg-no-repeat bg-center animate-pulse">
+            <img  src={data.avatar_url} className="rounded-full" alt="" />
+            </div>
+            <div className=" flex justify-around w-full">
+              <div className=" flex flex-col gap-2    ">
+                <h1 className=" font-bold text-3xl text-white username">{data.login}</h1>
+                <h3 className=" font-bold text-blue-500">{data.name}</h3>
+                <p className=" text-[#d7d7d7]">{data.bio}</p>
+              </div>
+              <div className=" text-[#d7d7d7]">{data.created_at}</div>
+            </div>
+          </div>
+          <div className=" flex justify-center items-center mt-10 flex-col">
+
+          <div className="bg-[#141c2f] w-[70%] flex flex-row justify-between px-5 py-5 rounded-md">
+            <div className=" text-center text-white font-bold">
+              <h3>Repo</h3>
+              <p>{data.public_repos}</p>
+            </div>
+            <div className="  text-center text-white font-bold">
+              <h3>Followers</h3>
+              <p>{data.followers}</p>
+            </div>
+            <div className="  text-center text-white font-bold">
+              <h3>Following</h3>
+              <p>{data.following}</p>
+            </div>
+          </div>
+          <div className=" flex flex-row justify-around w-full mt-10 text-white">
+            <div className="flex flex-col gap-6">
+                 <div className="flex items-center gap-2"> <FaLocationDot />{data.location ? data.location : "None"}</div>
+                <div className="flex items-center gap-2"> <FaLink />{data.blog === "" ? "None" : data.blog}</div>
+            </div>
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center gap-2"> < FaTwitter/>{data.twitter_username ? data.twitter_username : "None"}</div>
+               <div className="flex items-center gap-2"> < CgOrganisation/> {data.company ? data.company : "None"}</div>
+            </div>
+          </div>
+          </div>
         </div>
       </div>
     </div>
@@ -28,56 +116,43 @@ const Finder = () => {
 export default Finder;
 
 
+// import React, { useState, useEffect } from 'react';
+// import { FaSearch, FaLocationDot, FaLink, FaTwitter, CgOrganisation, IoSunnyOutline } from 'react-icons/all';
 
-// return (
-//     <div className="p-8">
-//       <h2 className="text-4xl font-bold mb-4 text-center">GitHub User Finder</h2>
-//       <div className="md:flex">
-//         <input
-//           type="text"
-//           placeholder="Enter GitHub username"
-//           value={username}
-//           onChange={(e) => setUsername(e.target.value)}
-//           className="w-full md:w-1/3 px-3 py-2 mb-4 md:mb-0 mr-4 rounded-md border focus:outline-none focus:ring focus:ring-sky-400"
-//         />
-//         <button
-//           onClick={handleSearch}
-//           className="w-full md:w-1/3 px-3 py-2 mb-4 md:mb-0 rounded-md bg-sky-500 text-white font-semibold hover:bg-sky-600 focus:outline-none focus:ring focus:ring-sky-400"
-//         >
-//           Search
-//         </button>
-//       </div>
+// const Finder = () => {
+//   const [data, setData] = useState({});
 
-//       {user ? (
-//         <div className="md:flex mt-8">
-//           <div className="md:w-1/3">
-//             <img
-//               src={user.avatar_url}
-//               alt={`${user.name} avatar`}
-//               className="w-48 h-48 md:w-64 md:h-auto rounded-full mx-auto"
-//             />
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       const response = await fetch('https://api.github.com/users/octocat');
+//       const result = await response.json();
+//       setData(result);
+//     };
+
+//     fetchData();
+//   }, []);
+
+//   return (
+//     <div className="max-w-[40%] flex justify-center items-center mx-auto h-screen flex-col">
+//       {/* ... */}
+//       <div className="bg-[#1F2A48] mt-10 w-full py-5 px-2 rounded-md">
+//         <div className="flex w-full">
+//           <div className="flex items-center gap-6">
+//             <div className="w-32 h-32 bg-slate-100 rounded-full"></div>
 //           </div>
-//           <div className="pt-6 md:p-8 text-center md:text-left space-y-4 md:space-y-8 md:w-2/3">
-//             <blockquote>
-//               <p className="text-lg font-medium">{user.bio || 'This profile has no bio.'}</p>
-//             </blockquote>
-//             <figcaption className="font-medium">
-//               <div className="text-sky-500">{user.name}</div>
-//               <div className="text-slate-500">{user.login}</div>
-//             </figcaption>
-//             <div className="text-slate-500">
-//               Joined: {new Date(user.created_at).toLocaleDateString()}
+//           <div className="flex justify-around w-full">
+//             <div className="flex flex-col gap-2">
+//               <h1 className="font-bold text-3xl text-white username">{data.login}</h1>
+//               <h3 className="font-bold text-blue-500">{data.name}</h3>
+//               <p className="text-[#d7d7d7]">{data.bio}</p>
 //             </div>
-//             <div className="text-slate-500">Repos: {user.public_repos}</div>
-//             <div className="text-slate-500">Followers: {user.followers}</div>
-//             <div className="text-slate-500">Following: {user.following}</div>
+//             <div className="text-[#d7d7d7]">{data.created_at}</div>
 //           </div>
 //         </div>
-//       ) : (
-//         <p className="mt-8 text-center">Enter a GitHub username and click "Search" to begin.</p>
-//       )}
+//         {/* ... */}
+//       </div>
 //     </div>
 //   );
-// }
+// };
 
-// export default App;
+// export default Finder;
